@@ -1,0 +1,38 @@
+:host {
+    width: 100%;
+    margin: 0 auto;
+}
+
+nav {
+    height: 3rem;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: inherit;
+}
+
+nav li {
+    flex: 1 1 0;
+    display: grid;
+    border-radius: 1rem 1rem 0 0;
+    border: solid 2px var(--colour-primary-dark);
+}
+
+nav li:hover{
+    background-color: violet;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--colour-primary-dark);
+    text-align: center;
+    width: 100%;
+    height: 100%;
+
+}

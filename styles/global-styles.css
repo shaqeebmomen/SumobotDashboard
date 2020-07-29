@@ -3,6 +3,12 @@
     --colour-primary-dark: #555;
     --colour-secondary: darkorchid;
     --colour-secondary-light: mediumPurple;
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+}
+
+nav-bar {
+    height: 10vh;
 }
 
 dash-logger {

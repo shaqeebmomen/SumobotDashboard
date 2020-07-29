@@ -1,0 +1,10 @@
+:root {
+    --colour-primary: #f4f4f4;
+    --colour-primary-dark: #555;
+    --colour-secondary: darkorchid;
+    --colour-secondary-light: mediumPurple;
+}
+
+dash-logger {
+    width:60%;
+}

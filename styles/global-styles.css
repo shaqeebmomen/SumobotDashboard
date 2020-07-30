@@ -1,8 +1,23 @@
 :root {
-    --colour-primary: #f4f4f4;
-    --colour-primary-dark: #555;
-    --colour-secondary: darkorchid;
-    --colour-secondary-light: mediumPurple;
+    --text-color-primary: #f4f4f4;
+    --text-color-secondary: #555;
+    --color-primary: #555;
+    --color-primary-light: #888;
+    --color-secondary: #f4f4f4;
+    --color-tertiary: maroon;
+
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+    
+}
+
+body {
+    background-color: var(--color-primary);
+}
+
+nav-bar {
+    width: 60%;
+    height: 2rem;
 }
 
 dash-logger {

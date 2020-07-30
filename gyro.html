@@ -14,10 +14,10 @@
 </head>
 
 <body>
-    <dash-logger id="dash-logger">
+    <!-- <dash-logger id="dash-logger">
         <p slot="title">Console</p>
-    </dash-logger>
-
+    </dash-logger> -->
+    <nav-bar></nav-bar>
     <script>
         const navbar = document.querySelector("nav-bar");
         import("./components/nav-bar.js").then(() => {
@@ -39,7 +39,7 @@
                     label: "tuning"
                 }
             ];
-            navbar.selected = "main";
+            navbar.selected = "gyro";
         });
     </script>
 </body>

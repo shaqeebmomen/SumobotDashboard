@@ -5,12 +5,9 @@
     border: 2px var(--colour-primary-dark) solid;
 }
 
-textarea,
-input,
-#title {
+textarea {
     resize: none;
-    font-family: Roboto, sans-serif;
-    font-size: 16px;
+    
 }
 
 textarea::-webkit-scrollbar-track {

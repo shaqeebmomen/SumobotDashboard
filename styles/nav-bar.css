@@ -1,0 +1,56 @@
+:host  {
+    --nav-item-color: var(--color-secondary);
+    --nav-item-hover-color: var(--color-primary-light);
+    --nav-text-color: var(--text-color-secondary);
+    --nav-border-color: var(--color-primary-light);
+
+    --nav-selected-item-color: var(--color-primary);
+    --nav-selected-text-color: var(--text-color-primary);
+
+    --border-size: 2px;
+    padding-bottom: var(--border-size);
+}
+
+ul {
+    height: inherit;
+    width: inherit;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    height: inherit;
+    flex: 1 1 0;
+    margin: 0 0px;
+}
+
+a {
+    height: inherit;
+    display: grid;
+    place-items: center;
+    text-decoration: none;
+    background-color: var(--nav-item-color);
+    color: var(--nav-text-color);
+    border: var(--border-size) solid var(--nav-border-color);
+    border-radius: 1rem 1rem 0 0;
+    border-bottom: none;
+}
+
+.selected {
+    background-color: var(--nav-selected-item-color);
+    color: var(--nav-selected-text-color);
+}
+
+a:hover {
+    background-color: var(--nav-item-hover-color);
+    color: var(--nav-selected-text-color);
+}
+
+p {
+    height: 1rem;
+    margin: 0;
+}

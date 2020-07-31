@@ -46,20 +46,23 @@ class NoFaceSocket extends EventTarget {
                         if(encoderRChart = document.querySelector("chart-encR")){
                             encoderRChart.dispatchEvent(new CustomEvent("encRupdate"), {
                                 encR: data[0],
-                                velR: data[2]
+                                velR: data[2],
+                                time: data[8]
                             });
                         }
                         if(encoderLChart = document.querySelector("chart-encL")){
                             encoderLChart.dispatchEvent(new CustomEvent("encLupdate"), {
                                 encL: data[1],
-                                velL: data[3]
+                                velL: data[3],
+                                time: data[8]
                             });
                         }
                         // Gyro
                         if(gyroChart = document.querySelector("chart-gyro")){
                             gyroChart.dispatchEvent(new CustomEvent("gyroupdate"), {
                                 angle: data[4],
-                                omega: data[5]
+                                omega: data[5],
+                                time: data[8]
                             });
                         }
                         // Mode
@@ -71,8 +74,14 @@ class NoFaceSocket extends EventTarget {
                         // }
                         
                         break;
-
+                    // Format: "kP, kI, kD, g_offset"
                     case this.schemas.TUNING:
+                        console.log(tuning_data = {
+                            kP: data[0],
+                            kI: data[1],
+                            kD: data[2],
+                            g_offset: data[3]
+                        });
                         break;
 
                     case this.schemas.LOG:

@@ -66,8 +66,6 @@ class GraphBox extends HTMLElement {
 
 
     drawGraph = () => {
-        // Global Options
-
 
         this.chart = new Chart(this.ctx, {
             type: 'line',

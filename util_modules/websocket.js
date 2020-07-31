@@ -1,5 +1,10 @@
 
 class NoFaceSocket extends EventTarget {
+    schemas = {
+        STATE: "state",
+        TUNING: "tuning",
+        LOG: "log"
+    }
     constructor(user, pass, ipAddy = '192.168.1.1') {
         if (!NoFaceSocket.instance) {
             super();
@@ -31,9 +36,56 @@ class NoFaceSocket extends EventTarget {
 
             this.socket.onmessage = (e) => {
                 console.log(e.data);
-                
-                this.update(e.data);
+                const parsedData = e.data.toString().split(":");
+                const schema = parsedData[0];
+                data = parsedData[1].split(",");
+                switch (schema) {
+                    case this.schemas.STATE:
+                        // Format: "encR,encL,velR,velL,angle,omega,mode,timestamp"
+                        // Encoders
+                        if(encoderRChart = document.querySelector("chart-encR")){
+                            encoderRChart.dispatchEvent(new CustomEvent("encRupdate"), {
+                                encR: data[0],
+                                velR: data[2]
+                            });
+                        }
+                        if(encoderLChart = document.querySelector("chart-encL")){
+                            encoderLChart.dispatchEvent(new CustomEvent("encLupdate"), {
+                                encL: data[1],
+                                velL: data[3]
+                            });
+                        }
+                        // Gyro
+                        if(gyroChart = document.querySelector("chart-gyro")){
+                            gyroChart.dispatchEvent(new CustomEvent("gyroupdate"), {
+                                angle: data[4],
+                                omega: data[5]
+                            });
+                        }
+                        // Mode
+                        // if(gyroChart = document.querySelector("chart-gyro")){
+                        //     gyroChart.dispatchEvent(new CustomEvent("gyroupdate"), {
+                        //         angle: data[2],
+                        //         omega: data[3]
+                        //     });
+                        // }
+                        
+                        break;
 
+                    case this.schemas.TUNING:
+                        break;
+
+                    case this.schemas.LOG:
+                        data = parsedData[1];
+                        document.querySelector("#dash-logger").shadowRoot.querySelector("#logger").dispatchEvent(new CustomEvent("logupdate"), {
+                            detail: data,
+                            bubbles: true
+                        });
+                        break;
+
+                    default:
+                        this.update(e.data);
+                }
             }
             NoFaceSocket.instance = this;
         }
@@ -63,6 +115,6 @@ class NoFaceSocket extends EventTarget {
 let user = 'Shabeeb';
 let password = 'nomnom69';
 // let ipAddy = 'nofacedash';
-const nfSocket = new NoFaceSocket(user,password);
+const nfSocket = new NoFaceSocket(user, password);
 export default nfSocket;
 

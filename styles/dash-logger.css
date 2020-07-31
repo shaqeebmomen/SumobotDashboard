@@ -5,7 +5,8 @@
     border: 2px var(--color-secondary) solid;
     background-color: var(--color-primary);
     color: var(--text-color-primary);
-    border-radius: 0.5rem 0.5rem 0 0 ;
+    border-radius: var(--component-border-rad) var(--component-border-rad) 0 0;
+    box-sizing: border-box;
 }
 
 textarea {

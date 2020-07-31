@@ -8,12 +8,11 @@
     --nav-selected-text-color: var(--text-color-primary);
 
     --border-size: 2px;
-    padding-bottom: var(--border-size);
+
 }
 
 ul {
     height: inherit;
-    width: inherit;
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -38,6 +37,7 @@ a {
     border: var(--border-size) solid var(--nav-border-color);
     border-radius: 1rem 1rem 0 0;
     border-bottom: none;
+    box-sizing: border-box;
 }
 
 .selected {

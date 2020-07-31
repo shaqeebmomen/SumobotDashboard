@@ -1,4 +1,4 @@
-import { nfSocket } from '../util_modules/websocket.js'
+import nfSocket  from '../util_modules/websocket.js'
 
 const template = document.createElement('template');
 

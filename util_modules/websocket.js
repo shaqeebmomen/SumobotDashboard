@@ -31,6 +31,7 @@ class NoFaceSocket extends EventTarget {
 
             this.socket.onmessage = (e) => {
                 console.log(e.data);
+                
                 this.update(e.data);
 
             }

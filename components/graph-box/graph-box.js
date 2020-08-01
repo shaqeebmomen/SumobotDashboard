@@ -12,7 +12,7 @@ class GraphBox extends HTMLElement {
     */
     constructor() {
         super();
-        fetch("./components/graph-box.html")
+        fetch("/components/graph-box/graph-box.html")
             .then((response) => {
                 return response.text();
             })
@@ -25,14 +25,10 @@ class GraphBox extends HTMLElement {
                 this.maxPointCount = 500;
 
                 // Importing CSS properties
-
-                // ***TODO***  Rewrite to use css added to this component only
-                this.rootStyles = getComputedStyle(document.documentElement);
+                this.rootStyles = getComputedStyle(this);
                 this.fontSize = this.rootStyles.getPropertyValue("font-size");
                 this.fontFamily = this.rootStyles.getPropertyValue("font-family");
                 this.fontColor = this.rootStyles.getPropertyValue("--color-secondary");
-                this.secondaryColor = this.rootStyles.getPropertyValue("--color-secondary");
-                this.tertiaryColor = this.rootStyles.getPropertyValue("--color-tertiary");
 
                 Chart.defaults.global.defaultFontFamily = this.fontFamily;
                 Chart.defaults.global.defaultFontColor = this.fontColor;
@@ -46,33 +42,33 @@ class GraphBox extends HTMLElement {
                 this.ctx.width = this.container.width;
                 this.ctx.height = this.container.height
                 this._labels = this.getAttribute("label").split(",");
-                //Data Schema
-                // {
-                //     x: [0, 1, 2, 3, 4, 5, 6, 7],
-                //         sets: [
-                //             {
-                //                 y: [12, 19, 12, 34, 12, -50, -25, -10],
-                //                 label: this._labels[0],
-                //                 color: this.secondaryColor
-                //             }
-                //         ]
-                // }
-                this.initGraph();
-                this.updateData([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                    [
-                        {
-                            y: [12, 32, 41, 2, -5, -20, 9, -10, 5, 2],
-                            color: "blue"
-                        },
-                        {
-                            y: [2, 5, -10, 9, -20, -5, 2, 41, 32, 12],
-                            color: "red"
-                        }
-                    ]
-                )
-
-            });// Fetch end
-
+            })
+            .then(() => {
+                fetch("/components/graph-box/graph-box.css")
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((data) => {
+                        const link = document.createElement("style");
+                        link.innerHTML = data;
+                        this.shadowRoot.appendChild(link);
+                    })
+                    .then(() => {
+                        this.initGraph();
+                        this.updateData([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                            [
+                                {
+                                    y: [12, 32, 41, 2, -5, -20, 9, -10, 5, 2],
+                                    color: "blue"
+                                },
+                                {
+                                    y: [2, 5, -10, 9, -20, -5, 2, 41, 32, 12],
+                                    color: "red"
+                                }
+                            ]
+                        )
+                    })
+            });// Fetch end;
     }
 
     connectedCallback() {
@@ -124,6 +120,17 @@ class GraphBox extends HTMLElement {
     }
 
     // Full replace of data for chart, if data set is big.. trim it with maxPoints setter
+    //Data Schema
+    // {
+    //     x: [0, 1, 2, 3, 4, 5, 6, 7],
+    //     y: [
+    //         {
+    //             y: [12, 19, 12, 34, 12, -50, -25, -10],
+    //             label: this._labels[0],
+    //             color: "red"
+    //         }
+    //        ]
+    // }
     updateData(x, y) {
         this.chart.data.labels = x;
         this.chart.data.datasets = [];
@@ -156,51 +163,6 @@ class GraphBox extends HTMLElement {
         }
     }
 
-    // initGraph() {
-    //     const datasets = [];
-    //     this._labels.forEach(label => {
-    //         datasets.push({
-    //             label: `${label}`,
-    //             data: [12, 19, 12, 34, 12, -50, -25, -10],
-    //             pointBackgroundColor: this.secondaryColor,
-    //             borderColor: this.secondaryColor
-    //         });
-    //     });
-    //     this.chart = new Chart(this.ctx, {
-    //         type: 'line',
-    //         data: {
-    //             labels: [0, 1, 2, 3, 4, 5, 6, 7],
-    //             datasets: datasets
-    //         },
-    //         options: {
-    //             scales: {
-    //                 xAxes: [{
-    //                     gridLines: {
-    //                         color: this.fontColor,
-    //                         display: true,
-    //                         zeroLineColor: this.fontColor
-    //                     },
-    //                     ticks: {
-    //                         padding: 5
-    //                     }
-    //                 }],
-    //                 yAxes: [{
-    //                     gridLines: {
-    //                         color: this.fontColor,
-    //                         display: true,
-    //                         zeroLineColor: this.tertiaryColor,
-    //                         zeroLineWidth: 3
-    //                     },
-    //                     ticks: {
-    //                         padding: 5,
-
-    //                     }
-    //                 }]
-    //             }
-    //         }
-    //     });
-    // }
-
     initGraph() {
         this.chart = new Chart(this.ctx, {
             type: 'line',
@@ -224,8 +186,7 @@ class GraphBox extends HTMLElement {
                         gridLines: {
                             color: this.fontColor,
                             display: true,
-                            zeroLineColor: this.tertiaryColor,
-                            zeroLineWidth: 3
+                            zeroLineWidth: 5
                         },
                         ticks: {
                             padding: 5,
@@ -251,6 +212,13 @@ class GraphBox extends HTMLElement {
     set maxPoints(value) {
         this.maxPointCount = value;
         this.chart.data.labels = this.chart.data.labels.slice(this.chart.data.labels.length - this.maxPointCount - 1, this.chart.data.labels.length - 1)
+        this.chart.update();
+    }
+
+    set yZeroLineColor(value) {
+        this.chart.options.scales.yAxes.forEach(yAxis => {
+            yAxis.gridLines.zeroLineColor = value;
+        });
         this.chart.update();
     }
 }

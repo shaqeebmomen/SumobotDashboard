@@ -1,4 +1,4 @@
-import nfSocket from '../util_modules/websocket.js'
+import nfSocket from '../../util_modules/websocket.js'
 
 const template = document.createElement('template');
 
@@ -9,7 +9,7 @@ class DashLogger extends HTMLElement {
         this.commands = [];
         this.commandIndex = 0;
         this.commandLengthMax = 10;
-        fetch("./components/dash-logger.html")
+        fetch("/components/dash-logger/dash-logger.html")
             .then((response) => {
                 return response.text();
             })
@@ -45,10 +45,10 @@ class DashLogger extends HTMLElement {
                             this.commandIndex--;
                             this.commandSender.value = this.commands[this.commandIndex];
                         }
-                        else if(this.commandIndex == 0) {
+                        else if (this.commandIndex == 0) {
                             this.commandIndex--;
                             this.commandSender.value = "";
-                            
+
                         }
                     }
                     console.log(this.commandIndex);
@@ -59,7 +59,17 @@ class DashLogger extends HTMLElement {
                     let date = new Date();
                     this.logger.value += date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds() + "-> " + event.detail.toString();
                 });
-            });
+            }).then(() => {
+                fetch("/components/dash-logger/dash-logger.css")
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((data) => {
+                        const link = document.createElement("style");
+                        link.innerHTML = data;
+                        this.shadowRoot.appendChild(link);
+                    })
+            });// Fetch end
 
     }
 

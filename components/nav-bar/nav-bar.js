@@ -1,4 +1,4 @@
-const template = document.createElement('template');
+const template = document.createElement("template");
 
 
 class NavBar extends HTMLElement {
@@ -6,7 +6,7 @@ class NavBar extends HTMLElement {
         super();
         this._links = [];
         this._ready = false;
-        fetch("./components/nav-bar.html")
+        fetch("/components/nav-bar/nav-bar.html")
             .then((response) => {
                 return response.text();
             })
@@ -20,9 +20,19 @@ class NavBar extends HTMLElement {
             .then(() => {
                 this.refreshList();
                 this.setSelected();
+
+            }).then(() => {
+                fetch("/components/nav-bar/nav-bar.css")
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((data) => {
+                        const link = document.createElement("style");
+                        link.innerHTML = data;
+                        this.shadowRoot.appendChild(link);
+                    });
+
             });
-
-
     }
 
     connectedCallback() {

@@ -4,7 +4,7 @@ const template = document.createElement('template');
 class ControlPanel extends HTMLElement {
     constructor() {
         super();
-        fetch("./components/control-panel.html")
+        fetch("/components/control-panel/control-panel.html")
             .then((response) => {
                 return response.text();
             })
@@ -16,8 +16,16 @@ class ControlPanel extends HTMLElement {
                 this._states = this.getAttribute("states").split(",");
                 this._activeState = this._states[0];
                 this.updateStates();
-
-
+            }).then(() => {
+                fetch("/components/control-panel/control-panel.css")
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((data) => {
+                        const link = document.createElement("style");
+                        link.innerHTML = data;
+                        this.shadowRoot.appendChild(link);
+                    })
             });// Fetch end
 
     }
@@ -44,7 +52,7 @@ class ControlPanel extends HTMLElement {
             const stateDiv = document.createElement("div");
             stateDiv.innerText = state;
             stateDiv.classList.add("stateDiv");
-            if(state == this._activeState){
+            if (state == this._activeState) {
                 stateDiv.classList.add("activeStateDiv");
             }
             this._stateDisplay.appendChild(stateDiv);

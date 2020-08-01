@@ -30,6 +30,7 @@ class GraphBox extends HTMLElement {
                 this.fontFamily = this.rootStyles.getPropertyValue("font-family");
                 this.fontColor = this.rootStyles.getPropertyValue("--color-secondary");
 
+                Chart.defaults.global.animation.duration = 20;
                 Chart.defaults.global.defaultFontFamily = this.fontFamily;
                 Chart.defaults.global.defaultFontColor = this.fontColor;
                 Chart.defaults.global.defaultFontSize = parseInt(this.fontSize.substring(0, this.fontSize.length - 2), 10);
@@ -131,11 +132,20 @@ class GraphBox extends HTMLElement {
     //         }
     //        ]
     // }
-    updateData(x, y) {
+    updateData(x, sets) {
+        // Empty the sets
         this.chart.data.labels = x;
         this.chart.data.datasets = [];
-        for (let i = 0; i < this._labels.length; i++) {
-            const dataset = y[i];
+        // Loop through each set
+        for (let i = 0; i < sets.length; i++) {
+            // Check if the set has no holes
+            if (x.length != sets[i].y.length) {
+                // Reset the set if it does
+                this.chart.data.labels = [];
+                this.chart.data.datasets = [];
+                throw ( new Error("number of x and y values dont match!!"));
+            }
+            const dataset = sets[i];
             const set = {
                 label: this._labels[i],
                 data: dataset.y,
@@ -144,6 +154,7 @@ class GraphBox extends HTMLElement {
             }
             this.chart.data.datasets.push(set);
         }
+        this.maxPointCount = x.length;
         this.chart.update();
     }
 
@@ -211,8 +222,15 @@ class GraphBox extends HTMLElement {
     //Set the maximum amount of points for a graph
     set maxPoints(value) {
         this.maxPointCount = value;
-        this.chart.data.labels = this.chart.data.labels.slice(this.chart.data.labels.length - this.maxPointCount - 1, this.chart.data.labels.length - 1)
-        this.chart.update();
+        if (this.chart.data.labels.length > value) {
+            const start = this.chart.data.labels.length - this.maxPointCount - 1;
+            const end = this.chart.data.labels.length - 1;
+            this.chart.data.labels = this.chart.data.labels.slice(start, end);
+            for (let i = 0; i < this.chart.data.datasets.length; i++) {
+                this.chart.data.datasets[i].data = this.chart.data.datasets[i].data.slice(start, end);
+            }
+            this.chart.update();
+        }
     }
 
     set yZeroLineColor(value) {

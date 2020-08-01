@@ -7,6 +7,8 @@ class GraphBox extends HTMLElement {
         This object is meant to be created by
         using the label attribute formatted as -> "label1,label2,...label99" to establish the data sets
         and then calling the updateData(x,y[{}]) method to properly populate the data (schema below)
+
+        Mind that some css properties need to be defined to make this work properly, see below comment "Importing CSS properties"
     */
     constructor() {
         super();
@@ -22,7 +24,9 @@ class GraphBox extends HTMLElement {
                 this.container = this.shadowRoot.querySelector(".container");
                 this.maxPointCount = 500;
 
+                // Importing CSS properties
 
+                // ***TODO***  Rewrite to use css added to this component only
                 this.rootStyles = getComputedStyle(document.documentElement);
                 this.fontSize = this.rootStyles.getPropertyValue("font-size");
                 this.fontFamily = this.rootStyles.getPropertyValue("font-family");

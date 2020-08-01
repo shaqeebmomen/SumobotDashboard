@@ -5,12 +5,26 @@
     border: 2px var(--color-secondary) solid;
     background-color: var(--color-primary);
     color: var(--text-color-primary);
-    border-radius: var(--component-border-rad) var(--component-border-rad) 0 0;
+    
     box-sizing: border-box;
+}
+
+
+input {
+    color: var(--text-color-secondary);
+    font-family: Roboto,sans-serif;
+    outline: none;
+    border: none;
+    margin: 2px;
+    border-radius:0 0 4px 4px;
 }
 
 textarea {
     resize: none;
+    margin: 2px;
+    margin-bottom: 0;
+    border-radius: 4px 4px 0 0 ;
+    background-color: var(--color-primary-light);
 }
 
 textarea::-webkit-scrollbar-track {

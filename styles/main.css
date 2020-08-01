@@ -1,7 +1,7 @@
 main {
     display: grid;
     /* grid-auto-rows: 1fr; */
-    grid-template: 50% 50% / 50% 50%;
+    grid-template-columns: 50% 50%;
     box-sizing: border-box;
     /* padding: 5px 0px; */
     margin: 0;
@@ -9,25 +9,13 @@ main {
 }
 
 
-#placeholder {
-    width: 20%;
-}
-
 
 #chart-gyro {
     border-radius: var(--component-border-rad);
     grid-column: 1;
-    grid-row: 1/3;
 }
 
-#chart-encR {
+#chart-enc {
     border-radius: var(--component-border-rad);
     grid-column: 2;
-    grid-row: 1;
-}
-
-#chart-encL {
-    border-radius: var(--component-border-rad);
-    grid-column: 2;
-    grid-row: 2;
 }

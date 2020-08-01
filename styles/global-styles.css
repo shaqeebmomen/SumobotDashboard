@@ -33,10 +33,17 @@ nav-bar {
     width: 60%;
     height: 2rem;
 }
-
+control-panel {
+    width: 40%;
+    height: auto;
+    margin-right: 5px;
+    border-radius: var(--component-border-rad);
+}
 dash-logger {
     width: 60%;
     height: 7rem;
+    border-radius: var(--component-border-rad);
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 

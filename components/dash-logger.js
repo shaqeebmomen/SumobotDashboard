@@ -39,8 +39,6 @@ class DashLogger extends HTMLElement {
                             this.commandIndex++;
                             this.commandSender.value = this.commands[this.commandIndex];
                         }
-
-
                     }
                     else if (event.code === "ArrowDown") {
                         if (this.commandIndex > 0) {
@@ -52,7 +50,6 @@ class DashLogger extends HTMLElement {
                             this.commandSender.value = "";
                             
                         }
-
                     }
                     console.log(this.commandIndex);
                 });
@@ -84,4 +81,4 @@ class DashLogger extends HTMLElement {
 
 }
 
-window.customElements.define('dash-logger', DashLogger);
+window.customElements.define("dash-logger", DashLogger);

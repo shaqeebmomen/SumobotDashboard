@@ -13,6 +13,8 @@
     <script type="module" src="./components/dash-logger.js"></script>
     <script type="module" src="./components/nav-bar.js"></script>
     <script type="module" src="./components/graph-box.js"></script>
+    <script type="module" src="./components/control-panel.js"></script>
+
 
     <!-- mini import  -->
     <!-- 
@@ -32,14 +34,12 @@
 
     <main>
 
-        <graph-box id="chart-gyro" label="Gryo Angle"></graph-box>
-        <graph-box id="chart-encR" label="Encoder Right"></graph-box>
-        <graph-box id="chart-encL" label="Encoder Left"></graph-box>
+        <graph-box id="chart-gyro" label="Gyro Angle"></graph-box>
+        <graph-box id="chart-enc" label="EncR,EncL"></graph-box>
 
     </main>
     <footer>
-        <div id="placeholder"></div>
-        <div id="placeholder"></div>
+        <control-panel states="Idle,PID,Motion Profile,Test,Disabled"></control-panel>
         <dash-logger id="dash-logger">
             <p slot="title">Console</p>
         </dash-logger>

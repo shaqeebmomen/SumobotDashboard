@@ -1,0 +1,2 @@
+[Command for use to run app]
+npx http-server 

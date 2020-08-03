@@ -9,6 +9,7 @@ class DashLogger extends HTMLElement {
         this.commands = [];
         this.commandIndex = 0;
         this.commandLengthMax = 10;
+        this.scroll_enable = true;
         fetch("/components/dash-logger/dash-logger.html")
             .then((response) => {
                 return response.text();
@@ -19,6 +20,8 @@ class DashLogger extends HTMLElement {
                 this.shadowRoot.appendChild(template.content.cloneNode(true));
                 this.logger = this.shadowRoot.querySelector('#logger');
                 this.commandSender = this.shadowRoot.querySelector('#commandSender');
+                this.scrollBtn = this.shadowRoot.querySelector('#scrollBtn');
+                this.scroll_en = this.scroll_enable;
 
                 // Event Listeners
                 this.commandSender.addEventListener("keyup", (event) => {
@@ -54,11 +57,19 @@ class DashLogger extends HTMLElement {
                     console.log(this.commandIndex);
                 });
 
-
-                this.logger.addEventListener("socketupdate", (event) => {
+                this.addEventListener("logupdate", (event) => {
                     let date = new Date();
-                    this.logger.value += date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds() + "-> " + event.detail.toString();
+                    this.logger.value += date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds() + "->" + event.detail.toString() + "\n";
+                    if (this.scroll_enable) {
+                        this.logger.scrollTop = this.logger.scrollHeight;
+                    }
+
                 });
+
+                this.scrollBtn.addEventListener("click", (event) => {
+                    console.log('clicked');
+                    this.scroll_en = !this.scroll_en;
+                })
             }).then(() => {
                 fetch("/components/dash-logger/dash-logger.css")
                     .then((response) => {
@@ -87,6 +98,25 @@ class DashLogger extends HTMLElement {
 
     adoptedCallback() {
         //implementation
+    }
+
+    set scroll_en(value) {
+        console.log("btn clicked");
+        this.scroll_enable = value;
+        if (value) {
+            this.scrollBtn.textContent = "Stop Auto Scroll";
+            this.scrollBtn.classList.remove("scroll-dis");
+            this.scrollBtn.classList.add("scroll-en");
+        }
+        else {
+            this.scrollBtn.textContent = "Start Auto Scroll";
+            this.scrollBtn.classList.add("scroll-en");
+            this.scrollBtn.classList.add("scroll-dis");
+        }
+    }
+
+    get scroll_en() {
+        return this.scroll_enable;
     }
 
 }

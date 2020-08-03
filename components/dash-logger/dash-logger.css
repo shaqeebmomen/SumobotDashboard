@@ -44,9 +44,43 @@ textarea::-webkit-scrollbar-thumb {
     background-color: #555;
 }
 
+span {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 
+
+button {
+    margin: 2px;
+    border-radius: var(--component-border-rad);
+    border: none;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.3);
+    outline: none;
+    box-sizing: border-box;
+}
+
+button:hover {
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+button:active {
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.9);
+    transform: translateY(-0.5px);
+}
+
+.scroll-en {
+    background-color: var(--color-tertiary);
+    color: var(--text-color-primary);
+}
+
+.scroll-dis {
+    background-color: var(--color-secondary);
+    color: var(--text-color-secondary);
+}
 
 ::slotted(p) {
     padding: 0;
     margin: 0;
+    margin-left: 2px;
 }

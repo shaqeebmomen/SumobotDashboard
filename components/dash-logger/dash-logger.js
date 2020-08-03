@@ -34,7 +34,6 @@ class DashLogger extends HTMLElement {
                         this.commands.unshift(this.commandSender.value);
                         this.commandSender.value = "";
                         this.commandIndex = -1;
-                        console.log(this.commands);
                     }
                     if (event.code === "ArrowUp") {
 
@@ -54,7 +53,6 @@ class DashLogger extends HTMLElement {
 
                         }
                     }
-                    console.log(this.commandIndex);
                 });
 
                 this.addEventListener("logupdate", (event) => {
@@ -67,7 +65,6 @@ class DashLogger extends HTMLElement {
                 });
 
                 this.scrollBtn.addEventListener("click", (event) => {
-                    console.log('clicked');
                     this.scroll_en = !this.scroll_en;
                 })
             }).then(() => {
@@ -101,7 +98,6 @@ class DashLogger extends HTMLElement {
     }
 
     set scroll_en(value) {
-        console.log("btn clicked");
         this.scroll_enable = value;
         if (value) {
             this.scrollBtn.textContent = "Stop Auto Scroll";

@@ -18,6 +18,9 @@ class NoFaceSocket extends EventTarget {
             this.socket.onopen = (e) => {
                 console.log('socket opened');
                 this.status = WebSocket.OPEN;
+                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange",{
+                    detail: true
+                }));
             }
 
             this.socket.onclose = (e) => {
@@ -27,6 +30,9 @@ class NoFaceSocket extends EventTarget {
                 else {
                     console.log('closed socket-not gucci');
                 }
+                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange",{
+                    detail: false
+                }));
             }
 
             this.socket.onerror = (e) => {

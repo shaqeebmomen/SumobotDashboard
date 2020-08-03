@@ -10,6 +10,13 @@
     font-size: 16px;
 }
 
+header {
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+
 body {
     background-color: var(--color-primary);
     display: grid;
@@ -44,6 +51,13 @@ dash-logger {
     height: 7rem;
     border-radius: var(--component-border-rad);
     box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+status-light {
+    height: 20px;
+    width: 20px;
+    box-sizing: border-box;
+    margin: auto 0;
 }
 
 

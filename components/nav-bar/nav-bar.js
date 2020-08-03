@@ -4,6 +4,15 @@ const template = document.createElement("template");
 class NavBar extends HTMLElement {
     constructor() {
         super();
+        /**
+         * Data Structure
+         * _links = [
+         *      {
+         *          destination: "something.html",
+         *          label: "string"
+         *      }
+         * ]
+         */
         this._links = [];
         this._ready = false;
         fetch("/components/nav-bar/nav-bar.html")
@@ -65,6 +74,7 @@ class NavBar extends HTMLElement {
             index++;
 
         });
+
 
     }
 

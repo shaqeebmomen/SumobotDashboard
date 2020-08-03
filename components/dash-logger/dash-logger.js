@@ -1,5 +1,3 @@
-import nfSocket from '../../util_modules/websocket.js'
-
 const template = document.createElement('template');
 
 
@@ -55,19 +53,12 @@ class DashLogger extends HTMLElement {
                     }
                 });
 
-                this.addEventListener("logupdate", (event) => {
-                    let date = new Date();
-                    this.logger.value += date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds() + "->" + event.detail.toString() + "\n";
-                    if (this.scroll_enable) {
-                        this.logger.scrollTop = this.logger.scrollHeight;
-                    }
-
-                });
 
                 this.scrollBtn.addEventListener("click", (event) => {
                     this.scroll_en = !this.scroll_en;
                 })
-            }).then(() => {
+            })
+            .then(() => {
                 fetch("/components/dash-logger/dash-logger.css")
                     .then((response) => {
                         return response.text();
@@ -113,6 +104,15 @@ class DashLogger extends HTMLElement {
 
     get scroll_en() {
         return this.scroll_enable;
+    }
+
+    registerSocket(socket, pagename, eventName, callback) {
+        socket.register(pagename, this.id, eventName);
+        this.addEventListener(eventName, callback);
+    }
+
+    get logbox() {
+        return this.logger;
     }
 
 }

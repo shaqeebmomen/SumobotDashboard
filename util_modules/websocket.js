@@ -1,10 +1,8 @@
 
-class NoFaceSocket extends EventTarget {
-    schemas = {
-        STATE: "state",
-        TUNING: "tuning",
-        LOG: "log"
-    }
+export class NoFaceSocket extends EventTarget {
+
+
+
     constructor(user, pass, ipAddy = '192.168.1.1') {
         if (!NoFaceSocket.instance) {
             super();
@@ -13,12 +11,31 @@ class NoFaceSocket extends EventTarget {
             this.ipAddy = ipAddy;
             this.socketURI = `ws://${user}:${password}@${ipAddy}:81/`;
             this.socket = new WebSocket(this.socketURI);
+            this.schemas = {
+                STATE: "state",
+                TUNING: "tuning",
+                LOG: "log"
+            }
 
+            /**
+             * Data Scheme
+             * STATE: [
+             *  {
+             *      id: id_of_element,
+             *      eventName: name_of_event
+             *  }
+             * ]
+             */
+            this.registry = {
+                [this.schemas.STATE]: [],
+                [this.schemas.TUNING]: [],
+                [this.schemas.LOG]: []
+            }
 
             this.socket.onopen = (e) => {
                 console.log('socket opened');
                 this.status = WebSocket.OPEN;
-                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange",{
+                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange", {
                     detail: true
                 }));
             }
@@ -30,7 +47,7 @@ class NoFaceSocket extends EventTarget {
                 else {
                     console.log('closed socket-not gucci');
                 }
-                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange",{
+                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange", {
                     detail: false
                 }));
             }
@@ -45,40 +62,24 @@ class NoFaceSocket extends EventTarget {
                 const schema = parsedData[0];
                 let data = parsedData[1].split(",");
                 switch (schema) {
+                    // Format: "encR,encL,velR,velL,angle,omega,mode,timestamp"
                     case this.schemas.STATE:
-                        
-                        // Format: "encR,encL,velR,velL,angle,omega,mode,timestamp"
-                        // Encoders
-                        // if(encoderRChart = document.querySelector("chart-encR")){
-                        //     encoderRChart.dispatchEvent(new CustomEvent("encRupdate"), {
-                        //         encR: data[0],
-                        //         velR: data[2],
-                        //         time: data[8]
-                        //     });
-                        // }
-                        // if(encoderLChart = document.querySelector("chart-encL")){
-                        //     encoderLChart.dispatchEvent(new CustomEvent("encLupdate"), {
-                        //         encL: data[1],
-                        //         velL: data[3],
-                        //         time: data[8]
-                        //     });
-                        // }
-                        // // Gyro
-                        // if(gyroChart = document.querySelector("chart-gyro")){
-                        //     gyroChart.dispatchEvent(new CustomEvent("gyroupdate"), {
-                        //         angle: data[4],
-                        //         omega: data[5],
-                        //         time: data[8]
-                        //     });
-                        // }
-                        // Mode
-                        // if(gyroChart = document.querySelector("chart-gyro")){
-                        //     gyroChart.dispatchEvent(new CustomEvent("gyroupdate"), {
-                        //         angle: data[2],
-                        //         omega: data[3]
-                        //     });
-                        // }
-                        
+                        let state_data = {
+                            encR: data[0],
+                            encL: data[1],
+                            velR: data[2],
+                            velL: data[3],
+                            angle: data[4],
+                            omega: data[5],
+                            mode: data[6],
+                            timestamp: data[7]
+                        };
+                        this.registry[this.schemas.LOG].forEach(element => {
+                            const target = document.getElementById(element.id);
+                            target.dispatchEvent(new CustomEvent(element.eventName, {
+                                detail: state_data
+                            }));
+                        });
                         break;
                     // Format: "kP, kI, kD, g_offset"
                     case this.schemas.TUNING:
@@ -88,17 +89,37 @@ class NoFaceSocket extends EventTarget {
                             kD: data[2],
                             g_offset: data[3]
                         };
+
+                        this.registry[this.schemas.LOG].forEach(element => {
+                            const target = document.getElementById(element.id);
+                            target.dispatchEvent(new CustomEvent(element.eventName, {
+                                detail: tuning_data
+                            }));
+                        });
                         break;
 
                     case this.schemas.LOG:
                         data = parsedData[1];
-                        this.logUpdate(data);
+                        // this.logUpdate(data);
+                        this.registry[this.schemas.LOG].forEach(element => {
+                            const target = document.getElementById(element.id);
+                            target.dispatchEvent(new CustomEvent(element.eventName, {
+                                detail: data
+                            }));
+                        });
                         break;
                     // Misc data
                     default:
+                        console.log(e.data);
                         break;
                 }
             }
+
+            // Event Listeners
+            this.addEventListener("socketsend", (event) => {
+                this.sendText(event.detail);
+            })
+
             NoFaceSocket.instance = this;
         }
         return this;
@@ -114,15 +135,19 @@ class NoFaceSocket extends EventTarget {
         }
     }
 
-    logUpdate(data) {
-        document.querySelector("#dash-logger").dispatchEvent(new CustomEvent("logupdate", {
-            detail: data,
-            bubbles: true
-        }));
+
+    register(pageName, id, eventName) {
+        //Check to remove duplicate (one element can register for multiple events)
+        if (this.registry[pageName].some((element) => element.id == id && element.eventname == eventName)) {
+            this.registry[pageName].splice(this.registry[pageName].findIndex((element) => {
+                element.id == id;
+            }), 1);
+        }
+        this.registry[pageName].push({ id, eventName });
     }
 
 
-}
+};
 
 let user = 'Shabeeb';
 let password = 'nomnom69';

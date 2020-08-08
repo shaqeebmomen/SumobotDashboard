@@ -4,19 +4,19 @@ import("../components/nav-bar/nav-bar.js").then(() => {
     const navbar = document.querySelector("nav-bar");
     navbar.links = [
         {
-            destination: "index.html",
+            destination: "../pages/index.html",
             label: "main"
         },
         {
-            destination: "gyro.html",
+            destination: "../pages/gyro.html",
             label: "gyro"
         },
         {
-            destination: "encoder.html",
+            destination: "../pages/encoder.html",
             label: "encoder"
         },
         {
-            destination: "tuning.html",
+            destination: "../pages/tuning.html",
             label: "tuning"
         }
     ];
@@ -41,6 +41,4 @@ window.onload = function () {
         const statuslight = document.querySelector("status-light");
         statuslight.status = socket.status == WebSocket.OPEN ? true : false;
     })
-
-
 }

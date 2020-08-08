@@ -74,7 +74,7 @@ export class NoFaceSocket extends EventTarget {
                             mode: data[6],
                             timestamp: data[7]
                         };
-                        this.registry[this.schemas.LOG].forEach(element => {
+                        this.registry[this.schemas.STATE].forEach(element => {
                             const target = document.getElementById(element.id);
                             target.dispatchEvent(new CustomEvent(element.eventName, {
                                 detail: state_data
@@ -90,7 +90,7 @@ export class NoFaceSocket extends EventTarget {
                             g_offset: data[3]
                         };
 
-                        this.registry[this.schemas.LOG].forEach(element => {
+                        this.registry[this.schemas.TUNING].forEach(element => {
                             const target = document.getElementById(element.id);
                             target.dispatchEvent(new CustomEvent(element.eventName, {
                                 detail: tuning_data

@@ -41,11 +41,5 @@ window.onload = function () {
     import("../components/status-light/status-light.js").then(() => {
         const statuslight = document.querySelector("status-light");
         statuslight.status = socket.status == WebSocket.OPEN ? true : false;
-    })
-
-    import("../components/tuning-box/tuning-box.js").then(() => {
-        const tuning = document.querySelector("tuning-box");
-        tuning.label = "test";
-
     });
 }

@@ -17,7 +17,29 @@ class TuningBox extends HTMLElement {
                 this._input = this._root.querySelector("#text");
                 this._set = this._root.querySelector("#set");
                 this._reset = this._root.querySelector("#reset");
+                this._defaultVal = 0.0;
+                this.value = this._defaultVal;
+
                 // Event Listeners
+
+                this._set.addEventListener("click", (event) => {
+                    if(this._output != null){
+                        this.value = this.value; // Killing leading and trailing zeros
+                        this._output(this.value);
+                    }
+                    else {
+                        console.log("no output registered");
+                    }
+                });
+                this._input.addEventListener("keyup", (event) => {
+                    if(event.code == "Enter"){
+                        this._set.click();
+                    }
+                });
+
+                this._reset.addEventListener("click", (event) => {
+                    this.value = this._defaultVal;
+                });
             })
             .then(() => {
                 fetch("/components/tuning-box/tuning-box.css")
@@ -30,7 +52,6 @@ class TuningBox extends HTMLElement {
                         this.shadowRoot.appendChild(link);
                     })
             });// Fetch end
-
     }
 
     connectedCallback() {
@@ -51,6 +72,30 @@ class TuningBox extends HTMLElement {
 
     set label(value) {
         this._label.innerHTML = value;
+    }
+
+    get label() {
+        return this._label.innerHTML;
+    }
+
+    set value(value) {
+        this._input.value = parseFloat(value);
+    } 
+
+    get value() {
+        return parseFloat(this._input.value);
+    }
+
+    set defaultVal(value) {
+        this._defaultVal = value;
+    }
+
+    get defaultVal() {
+        return this._defaultVal;
+    }
+
+    set output(fun) {
+        this._output = fun;
     }
 
 }

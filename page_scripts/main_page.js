@@ -32,8 +32,9 @@ import("../components/dash-logger/dash-logger.js").then(() => {
             logger.logbox.scrollTop = logger.logbox.scrollHeight;
         }
     });
-
 });
+
+
 
 // After elements are loaded
 window.onload = function () {
@@ -41,4 +42,10 @@ window.onload = function () {
         const statuslight = document.querySelector("status-light");
         statuslight.status = socket.status == WebSocket.OPEN ? true : false;
     })
+
+    import("../components/tuning-box/tuning-box.js").then(() => {
+        const tuning = document.querySelector("tuning-box");
+        tuning.label = "test";
+
+    });
 }

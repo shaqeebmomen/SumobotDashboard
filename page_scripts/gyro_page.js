@@ -4,19 +4,19 @@ import("../components/nav-bar/nav-bar.js").then(() => {
     const navbar = document.querySelector("nav-bar");
     navbar.links = [
         {
-            destination: "./pages/index.html",
+            destination: "../pages/index.html",
             label: "main"
         },
         {
-            destination: "./pages/gyro.html",
+            destination: "../pages/gyro.html",
             label: "gyro"
         },
         {
-            destination: "./pages/encoder.html",
+            destination: "../pages/encoder.html",
             label: "encoder"
         },
         {
-            destination: "./pages/tuning.html",
+            destination: "../pages/tuning.html",
             label: "tuning"
         }
     ];

@@ -8,6 +8,7 @@
     --component-border-rad: 0.5rem;
     font-family: Roboto, sans-serif;
     font-size: 16px;
+    margin: 0 15px;
 }
 
 header {
@@ -16,6 +17,7 @@ header {
     box-sizing: border-box;
     justify-content: space-between;
 }
+
 
 body {
     background-color: var(--color-primary);
@@ -58,6 +60,10 @@ status-light {
     width: 20px;
     box-sizing: border-box;
     margin: auto 0;
+}
+
+tuning-box {
+    height: 2rem;
 }
 
 

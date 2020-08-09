@@ -7,41 +7,58 @@
     <title>NoFaceDash</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles/global-styles.css">
+    <link rel="stylesheet" href="../styles/global-styles.css">
+    <link rel="stylesheet" href="../styles/tuning.css">
 
-    <script type="module" src="./components/dash-logger.js"></script>
-    <script type="module" src="./components/nav-bar.js"></script>
+
+    <script type="module" src="../components/status-light/status-light.js"></script>
+    <script type="module" src="../util_modules/websocket.js"></script>
+    <script type="module" src="../components/control-panel/control-panel.js"></script>
+    <script type="module" src="../components/dash-logger/dash-logger.js"></script>
+
+    <script type="module" src="../components/nav-bar/nav-bar.js"></script>
+    <script type="module" src="../components/tuning-box/tuning-box.js"></script>
+    <script type="module" src="../components/graph-box/graph-box.js"></script>
+
+
+
+    <!-- mini import  -->
+    <!-- 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
+        integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg=="
+        crossorigin="anonymous"></script> -->
+
 </head>
 
 <body>
-    <!-- <dash-logger id="dash-logger">
-        <p slot="title">Console</p>
-    </dash-logger> -->
-    <nav-bar></nav-bar>
-    <script>
-        const navbar = document.querySelector("nav-bar");
-        import("./components/nav-bar.js").then(() => {
-            navbar.links = [
-                {
-                    destination: "index.html",
-                    label: "main"
-                },
-                {
-                    destination: "gyro.html",
-                    label: "gyro"
-                },
-                {
-                    destination: "encoder.html",
-                    label: "encoder"
-                },
-                {
-                    destination: "tuning.html",
-                    label: "tuning"
-                }
-            ];
-            navbar.selected = "tuning";
-        });
-    </script>
+    <header>
+        <nav-bar></nav-bar>
+        <status-light></status-light>
+    </header>
+
+
+    <main>
+
+        <graph-box id="chart-sensor" label="Error,Setpoint"></graph-box>
+        <div class="col2">
+            <tuning-box id="kF-readout" label="kF"></tuning-box>
+            <tuning-box id="kP-readout" label="kP"></tuning-box>
+            <tuning-box id="kI-readout" label="kI"></tuning-box>
+            <tuning-box id="kD-readout" label="kD"></tuning-box>
+            <tuning-box id="setpoint-readout" label="setpoint"></tuning-box>
+            <tuning-box id="sensor-readout" options="distance,angle,rightV,leftV"></tuning-box>
+        </div>
+
+
+    </main>
+    <footer>
+        <control-panel states="Idle,PID,Motion Profile,Test,Disabled"></control-panel>
+        <dash-logger id="dash-logger">
+            <p slot="title">Console</p>
+        </dash-logger>
+    </footer>
+
+    <script type="module" src="../page_scripts/tuning_page.js"></script>
 </body>
 
 </html>

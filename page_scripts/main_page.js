@@ -42,4 +42,10 @@ window.onload = function () {
         const statuslight = document.querySelector("status-light");
         statuslight.status = socket.status == WebSocket.OPEN ? true : false;
     });
+    import("../components/graph-box/graph-box.js").then(() => {
+        document.querySelectorAll("graph-box").forEach(box => {
+            box.initGraph();
+
+        });
+    });
 }

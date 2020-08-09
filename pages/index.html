@@ -27,10 +27,6 @@
         integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg=="
         crossorigin="anonymous"></script> -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"
-        integrity="sha512-QEiC894KVkN9Tsoi6+mKf8HaCLJvyA6QIRzY5KrfINXYuP9NxdIkRQhGq3BZi0J4I7V5SidGM3XUQ5wFiMDuWg=="
-        crossorigin="anonymous"></script>
-
 </head>
 
 <body>
@@ -43,7 +39,9 @@
     <main>
 
         <graph-box id="chart-gyro" label="Gyro Angle"></graph-box>
-        <graph-box id="chart-enc" label="EncR,EncL"></graph-box>
+        <graph-box id="chart-enc" label="Encoder Avg"></graph-box>
+        <tuning-box id="gyro-readout" label="Angle"></tuning-box>
+        <tuning-box id="enc-readout" label="Avg Dist"></tuning-box>
 
     </main>
     <footer>

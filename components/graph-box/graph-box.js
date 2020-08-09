@@ -1,5 +1,11 @@
 const template = document.createElement('template');
 
+var chartJSImport = document.createElement('script');
+chartJSImport.setAttribute("src", "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js");
+chartJSImport.setAttribute("integrity", "sha512-QEiC894KVkN9Tsoi6+mKf8HaCLJvyA6QIRzY5KrfINXYuP9NxdIkRQhGq3BZi0J4I7V5SidGM3XUQ5wFiMDuWg==");
+chartJSImport.setAttribute("crossorigin", "anonymous");
+document.head.appendChild(chartJSImport);
+
 
 class GraphBox extends HTMLElement {
 
@@ -39,9 +45,7 @@ class GraphBox extends HTMLElement {
                 Chart.defaults.global.elements.line.backgroundColor = "rgba(0,0,0,0)";
                 Chart.defaults.global.elements.line.borderWidth = 2;
 
-                //Adjust internal size
-                this.ctx.width = this.container.width;
-                this.ctx.height = this.container.height
+
                 this._labels = this.getAttribute("label").split(",");
             })
             .then(() => {
@@ -55,19 +59,19 @@ class GraphBox extends HTMLElement {
                         this.shadowRoot.appendChild(link);
                     })
                     .then(() => {
-                        this.initGraph();
-                        this.updateData([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                            [
-                                {
-                                    y: [12, 32, 41, 2, -5, -20, 9, -10, 5, 2],
-                                    color: "blue"
-                                },
-                                {
-                                    y: [2, 5, -10, 9, -20, -5, 2, 41, 32, 12],
-                                    color: "red"
-                                }
-                            ]
-                        )
+
+                        // this.updateData([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        //     [
+                        //         {
+                        //             y: [12, 32, 41, 2, -5, -20, 9, -10, 5, 2],
+                        //             color: "blue"
+                        //         },
+                        //         {
+                        //             y: [2, 5, -10, 9, -20, -5, 2, 41, 32, 12],
+                        //             color: "red"
+                        //         }
+                        //     ]
+                        // )
                     })
             });// Fetch end;
     }
@@ -80,13 +84,16 @@ class GraphBox extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
-        if (name === "label") {
+        if (name.localeCompare("label") === 0) {
             this._labels = newVal.split(",");
             if (this.chart) {
                 for (let i = 0; i < this._labels.length; i++) {
                     this.chart.data.datasets[i].label = this._labels[i];
                 }
-                this.chart.update();
+                if (this.chart) {
+                    this.chart.update();
+                }
+
             }
         }
 
@@ -116,8 +123,8 @@ class GraphBox extends HTMLElement {
                 this.chart.data.datasets[i].data.push(y[i]);
             }
         }
-
         this.chart.update();
+
     }
 
     // Full replace of data for chart, if data set is big.. trim it with maxPoints setter
@@ -136,14 +143,17 @@ class GraphBox extends HTMLElement {
         // Empty the sets
         this.chart.data.labels = x;
         this.chart.data.datasets = [];
+        if (this._labels.length != sets.length) {
+            console.log("Label & set counts dont match");
+        }
         // Loop through each set
-        for (let i = 0; i < sets.length; i++) {
+        for (let i = 0; i < this._labels.length; i++) {
             // Check if the set has no holes
             if (x.length != sets[i].y.length) {
                 // Reset the set if it does
                 this.chart.data.labels = [];
                 this.chart.data.datasets = [];
-                throw ( new Error("number of x and y values dont match!!"));
+                throw (new Error("number of x and y values dont match!!"));
             }
             const dataset = sets[i];
             const set = {
@@ -168,13 +178,19 @@ class GraphBox extends HTMLElement {
                     pointBackgroundColor: y.color,
                     borderColor: y.color
                 }
-                this.chart.update();
+                if (this.chart) {
+                    this.chart.update();
+                }
+
                 return;
             }
         }
     }
 
     initGraph() {
+        //Adjust internal size
+        this.ctx.width = this.container.width;
+        this.ctx.height = this.container.height
         this.chart = new Chart(this.ctx, {
             type: 'line',
             data: {
@@ -207,6 +223,18 @@ class GraphBox extends HTMLElement {
                 }
             }
         });
+        this.updateData([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            [
+                {
+                    y: [12, 32, 41, 2, -5, -20, 9, -10, 5, 2],
+                    color: "blue"
+                },
+                {
+                    y: [2, 5, -10, 9, -20, -5, 2, 41, 32, 12],
+                    color: "red"
+                }
+            ]
+        )
     }
 
     //Pass in array of values

@@ -62,17 +62,18 @@ export class NoFaceSocket extends EventTarget {
                 const schema = parsedData[0];
                 let data = parsedData[1].split(",");
                 switch (schema) {
-                    // Format: "encR,encL,velR,velL,angle,omega,mode,timestamp"
+                    // Format: "encR,encL,encAvg,velR,velL,angle,omega,mode,timestamp"
                     case this.schemas.STATE:
                         let state_data = {
                             encR: data[0],
                             encL: data[1],
-                            velR: data[2],
-                            velL: data[3],
-                            angle: data[4],
-                            omega: data[5],
-                            mode: data[6],
-                            timestamp: data[7]
+                            encAvg: data[2],
+                            velR: data[3],
+                            velL: data[4],
+                            angle: data[5],
+                            omega: data[6],
+                            mode: data[7],
+                            timestamp: data[8]
                         };
                         this.registry[this.schemas.STATE].forEach(element => {
                             const target = document.getElementById(element.id);
@@ -81,13 +82,15 @@ export class NoFaceSocket extends EventTarget {
                             }));
                         });
                         break;
-                    // Format: "kP, kI, kD, g_offset"
+                    // Format: "kP,kI,kD,setpoint,g_offset"
                     case this.schemas.TUNING:
                         let tuning_data = {
-                            kP: data[0],
-                            kI: data[1],
-                            kD: data[2],
-                            g_offset: data[3]
+                            kF: data[0],
+                            kP: data[1],
+                            kI: data[2],
+                            kD: data[3],
+                            setPoint: data[4],
+                            g_offset: data[5]
                         };
 
                         this.registry[this.schemas.TUNING].forEach(element => {

@@ -7,7 +7,7 @@ class DashLogger extends HTMLElement {
         this.commands = [];
         this.commandIndex = 0;
         this.commandLengthMax = 10;
-        this.scroll_enable = true;
+        this._scroll_en = true;
         fetch("/components/dash-logger/dash-logger.html")
             .then((response) => {
                 return response.text();
@@ -16,15 +16,18 @@ class DashLogger extends HTMLElement {
                 template.innerHTML = data;
                 this.attachShadow({ mode: "open" });
                 this.shadowRoot.appendChild(template.content.cloneNode(true));
-                this.logger = this.shadowRoot.querySelector('#logger');
-                this.commandSender = this.shadowRoot.querySelector('#commandSender');
-                this.scrollBtn = this.shadowRoot.querySelector('#scrollBtn');
-                this.scroll_en = this.scroll_enable;
+                this.logger = this.shadowRoot.querySelector("#logger");
+                this.commandSender = this.shadowRoot.querySelector("#commandSender");
+                this.scrollBtn = this.shadowRoot.querySelector("#scrollBtn");
+                this.clearBtn = this.shadowRoot.querySelector("#clearBtn");
+                this._maxLogs = 50;
+                this._logs = [];
+
 
                 // Event Listeners
                 this.commandSender.addEventListener("keyup", (event) => {
                     if (event.code === "Enter") {
-                        nfSocket.sendText(this.commandSender.value);
+                        this.logOutputFun(this.commandSender.value);
                         if (this.commands.length === this.commandLengthMax) {
                             this.commands.pop();
                         }
@@ -48,7 +51,6 @@ class DashLogger extends HTMLElement {
                         else if (this.commandIndex == 0) {
                             this.commandIndex--;
                             this.commandSender.value = "";
-
                         }
                     }
                 });
@@ -56,6 +58,9 @@ class DashLogger extends HTMLElement {
 
                 this.scrollBtn.addEventListener("click", (event) => {
                     this.scroll_en = !this.scroll_en;
+                });
+                this.clearBtn.addEventListener("click", (event) => {
+                    this.logger.value = "";
                 })
             })
             .then(() => {
@@ -88,8 +93,29 @@ class DashLogger extends HTMLElement {
         //implementation
     }
 
+    // Pass in a string message to log, timestamp prepended automatically
+    pushLog(data) {
+        let date = new Date();
+
+        const newLog = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds() + "->" + data + "\n";
+
+        if (this._logs.length >= this._maxLogs) {
+
+            const currentVal = this.logger.value;
+            this.logger.value = currentVal.slice(currentVal.indexOf(this._logs[0]));
+            this._logs.shift();
+        }
+        this._logs.push(newLog);
+
+        this.logger.value += newLog;
+
+        if (this.scroll_en) {
+            this.logger.scrollTop = this.logger.scrollHeight;
+        }
+    }
+
     set scroll_en(value) {
-        this.scroll_enable = value;
+        this._scroll_en = value;
         if (value) {
             this.scrollBtn.textContent = "Stop Auto Scroll";
             this.scrollBtn.classList.remove("scroll-dis");
@@ -103,16 +129,21 @@ class DashLogger extends HTMLElement {
     }
 
     get scroll_en() {
-        return this.scroll_enable;
+        return this._scroll_en;
     }
 
-    registerSocket(socket, pagename, eventName, callback) {
-        socket.register(pagename, this.id, eventName);
-        this.addEventListener(eventName, callback);
+
+    set logOutputFun(value) {
+        this._logOutputFun = value;
     }
 
-    get logbox() {
-        return this.logger;
+    set maxLogs(value) {
+        this._maxLogs = value;
+        if (this._logs.length > value) {
+            const start = this._logs.length - this._maxPoints - 1;
+            const end = this._logs.length - 1;
+            this._logs = this._logs.slice(start, end);
+        }
     }
 
 }

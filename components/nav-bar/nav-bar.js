@@ -27,10 +27,6 @@ class NavBar extends HTMLElement {
 
             })
             .then(() => {
-                this.refreshList();
-                this.setSelected();
-
-            }).then(() => {
                 fetch("/components/nav-bar/nav-bar.css")
                     .then((response) => {
                         return response.text();
@@ -40,6 +36,12 @@ class NavBar extends HTMLElement {
                         link.innerHTML = data;
                         this.shadowRoot.appendChild(link);
                     });
+
+            })
+            .then(() => {
+                this._ready = true;
+                this.refreshList();
+                this.selected = this.getAttribute("selected");
 
             });
     }
@@ -54,8 +56,20 @@ class NavBar extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
-        //implementation
+        switch (name) {
+            case "selected":
+                this.selected = newVal;
+                break;
+
+            default:
+                break;
+        }
     }
+
+    static get observedAttributes() {
+        return ["selected"];
+    }
+
 
     adoptedCallback() {
         //implementation
@@ -98,7 +112,7 @@ class NavBar extends HTMLElement {
     set selected(val) {
         this._selected = val;
         if (this._ready) {
-            this.setSelected(val);
+            this.setSelected();
         }
     }
 }

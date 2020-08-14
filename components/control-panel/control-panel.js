@@ -13,10 +13,28 @@ class ControlPanel extends HTMLElement {
                 this.attachShadow({ mode: "open" });
                 this.shadowRoot.appendChild(template.content.cloneNode(true));
                 this._stateDisplay = this.shadowRoot.querySelector("#state-display");
+                this._disableBtn = this.shadowRoot.querySelector("#disable-btn");
+                this._pauseBtn = this.shadowRoot.querySelector("#data-pause-btn");
+                this._disableMethod = () => {
+                    console.log("Disable Pressed");
+                }
+                this._pauseMethod = () => {
+                    console.log("Pause Pressed");
+                }
                 this._states = this.getAttribute("states").split(",");
-                this._activeState = this._states[0];
+                this._activeState = this.getAttribute("active");
                 this.updateStates();
-            }).then(() => {
+
+
+                // Setup event listeners
+                this._disableBtn.addEventListener("click", (event) => {
+                    this._disableMethod();
+                });
+                this._pauseBtn.addEventListener("click",(event) => {
+                    this._pauseMethod();
+                })
+            })
+            .then(() => {
                 fetch("/components/control-panel/control-panel.css")
                     .then((response) => {
                         return response.text();
@@ -39,11 +57,24 @@ class ControlPanel extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
-        //implementation
+        switch (name) {
+            case "active":
+                if (this._ready) {
+                    this.setActiveState(newVal);
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     adoptedCallback() {
         //implementation
+    }
+
+    static get observedAttributes() {
+        return ["active"];
     }
 
     updateStates() {
@@ -59,15 +90,23 @@ class ControlPanel extends HTMLElement {
         });
     }
 
+    setActiveState(value) {
+        this._activeState = value;
+        this.updateStates();
+    }
+
     set states(value) {
         this.setAttribute("states", value.join());
         this._states = value;
         this.updateStates();
     }
 
-    setActiveState(value) {
-        this._activeState = value;
-        this.updateStates();
+    set disableMethod(value) {
+        this._disableMethod = value;
+    }
+
+    set pauseMethod(value) {
+        this._pauseMethod = value;
     }
 
 }

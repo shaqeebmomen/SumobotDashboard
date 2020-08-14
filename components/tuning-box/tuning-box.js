@@ -15,18 +15,29 @@ class TuningBox extends HTMLElement {
                 this._root.appendChild(template.content.cloneNode(true));
                 this._label = this._root.querySelector("#label");
                 this._options = [this.getAttribute("label")];
+                this._dataKeys = this.getAttribute("data-keys").split(",");
+                this._selectedDataKey = this._dataKeys[0];
                 this._input = this._root.querySelector("#text");
                 this._set = this._root.querySelector("#set");
                 this._reset = this._root.querySelector("#reset");
                 this._defaultVal = 0.0;
+                this._focussed = false;
                 this.value = this._defaultVal;
 
                 // Event Listeners
 
+                this._input.addEventListener("focus", (event) => {
+                    this._focussed = true;
+                });
+
+                this._input.addEventListener("blur", (event) => {
+                    this._focussed = false;
+                })
+
                 this._set.addEventListener("click", (event) => {
                     if (this._output != null) {
                         this.value = this.value; // Killing leading and trailing zeros
-                        this._output(this.value);
+                        this._output(this.selectedDataKey,this.value);
                     }
                     else {
                         console.log("no output registered");
@@ -41,6 +52,7 @@ class TuningBox extends HTMLElement {
 
                 this._reset.addEventListener("click", (event) => {
                     this.value = this._defaultVal;
+                    this._set.click();
                 });
             })
             .then(() => {
@@ -78,12 +90,20 @@ class TuningBox extends HTMLElement {
                     if (this._options.length > 0) {
                         this.enableSelection();
                     }
+                    else if (this._options.length == 0) {
+                        this.disableSelection();
+                    }
+                    break;
+
+                case "data-keys":
+                    this._dataKeys = newVal.split(",");
+                    break;
             }
         }
     }
 
     static get observedAttributes() {
-        return ["label", "options"];
+        return ["label", "options", "data-keys"];
     }
 
     adoptedCallback() {
@@ -102,7 +122,9 @@ class TuningBox extends HTMLElement {
             if (this._label) {
                 this._root.querySelector(".col1").removeChild(this._label);
             }
-            this._selection.addEventListener("change", this.output ? this.output(this._selection.value) : () => { console.log(this._selection.value) });
+            this._selection.addEventListener("change", (event) => {
+                this._selectedDataKey = this._dataKeys[this._options.indexOf(this.selection)];
+            });
             this._selection.dispatchEvent(new Event("change"));
         }
     }
@@ -115,10 +137,13 @@ class TuningBox extends HTMLElement {
         this._label = document.createElement("H2");
         this.setAttribute("label", this._options[0]);
         this._root.querySelector(".col1").insertBefore(this._label, this._input);
-
+        
         if (this._selection) {
+            this.label = this.selection;
             this._root.querySelector(".col1").removeChild(this._selection);
         }
+        this._selectedDataKey = this._dataKeys[0];
+
     }
 
     init() {
@@ -131,6 +156,9 @@ class TuningBox extends HTMLElement {
         }
     }
 
+    get selection() {
+        return this._selection.value;
+    }
 
     set label(value) {
         if (this._label) {
@@ -165,6 +193,10 @@ class TuningBox extends HTMLElement {
 
     set output(fun) {
         this._output = fun;
+    }
+
+    get selectedDataKey() {
+        return this._selectedDataKey;
     }
 
 }

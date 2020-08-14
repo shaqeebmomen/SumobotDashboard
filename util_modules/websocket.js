@@ -1,131 +1,125 @@
 
 export class NoFaceSocket extends EventTarget {
 
-
-
-    constructor(user, pass, ipAddy = '192.168.1.1') {
-        if (!NoFaceSocket.instance) {
-            super();
-            this.user = user;
-            this.pass = pass;
-            this.ipAddy = ipAddy;
-            this.socketURI = `ws://${user}:${password}@${ipAddy}:81/`;
-            this.socket = new WebSocket(this.socketURI);
-            this.schemas = {
-                STATE: "state",
-                TUNING: "tuning",
-                LOG: "log"
-            }
-
-            /**
-             * Data Scheme
-             * STATE: [
-             *  {
-             *      id: id_of_element,
-             *      eventName: name_of_event
-             *  }
-             * ]
-             */
-            this.registry = {
-                [this.schemas.STATE]: [],
-                [this.schemas.TUNING]: [],
-                [this.schemas.LOG]: []
-            }
-
-            this.socket.onopen = (e) => {
-                console.log('socket opened');
-                this.status = WebSocket.OPEN;
-                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange", {
-                    detail: true
-                }));
-            }
-
-            this.socket.onclose = (e) => {
-                if (e.wasClean) {
-                    console.log('closed socket-gucci');
-                }
-                else {
-                    console.log('closed socket-not gucci');
-                }
-                document.querySelector("status-light").dispatchEvent(new CustomEvent("statuschange", {
-                    detail: false
-                }));
-            }
-
-            this.socket.onerror = (e) => {
-                console.log(`error: `);
-                console.log(e);
-            }
-
-            this.socket.onmessage = (e) => {
-                const parsedData = e.data.toString().split(":");
-                const schema = parsedData[0];
-                let data = parsedData[1].split(",");
-                switch (schema) {
-                    // Format: "encR,encL,encAvg,velR,velL,angle,omega,mode,timestamp"
-                    case this.schemas.STATE:
-                        let state_data = {
-                            encR: data[0],
-                            encL: data[1],
-                            encAvg: data[2],
-                            velR: data[3],
-                            velL: data[4],
-                            angle: data[5],
-                            omega: data[6],
-                            mode: data[7],
-                            timestamp: data[8]
-                        };
-                        this.registry[this.schemas.STATE].forEach(element => {
-                            const target = document.getElementById(element.id);
-                            target.dispatchEvent(new CustomEvent(element.eventName, {
-                                detail: state_data
-                            }));
-                        });
-                        break;
-                    // Format: "kP,kI,kD,setpoint,g_offset"
-                    case this.schemas.TUNING:
-                        let tuning_data = {
-                            kF: data[0],
-                            kP: data[1],
-                            kI: data[2],
-                            kD: data[3],
-                            setPoint: data[4],
-                            g_offset: data[5]
-                        };
-
-                        this.registry[this.schemas.TUNING].forEach(element => {
-                            const target = document.getElementById(element.id);
-                            target.dispatchEvent(new CustomEvent(element.eventName, {
-                                detail: tuning_data
-                            }));
-                        });
-                        break;
-
-                    case this.schemas.LOG:
-                        data = parsedData[1];
-                        // this.logUpdate(data);
-                        this.registry[this.schemas.LOG].forEach(element => {
-                            const target = document.getElementById(element.id);
-                            target.dispatchEvent(new CustomEvent(element.eventName, {
-                                detail: data
-                            }));
-                        });
-                        break;
-                    // Misc data
-                    default:
-                        console.log(e.data);
-                        break;
-                }
-            }
-
-            // Event Listeners
-            this.addEventListener("socketsend", (event) => {
-                this.sendText(event.detail);
-            })
-
-            NoFaceSocket.instance = this;
+    constructor(user, pass, ipAddy = "192.168.1.1", port = "81") {
+        super();
+        this.user = user;
+        this.pass = pass;
+        this.ipAddy = ipAddy;
+        this.socketURI = `ws://${user}:${password}@${ipAddy}:${port}/`;
+        this.socket = new WebSocket(this.socketURI);
+        this.schemas = {
+            STATE: "state",
+            TUNING: "tuning",
+            LOG: "log",
+            SOCKET: "socket"
         }
-        return this;
+
+
+        /**   Data Scheme
+        registry = {
+            STATE: [elementObjects...]
+        }
+        */
+
+        this.registry = {
+            [this.schemas.STATE]: [],
+            [this.schemas.TUNING]: [],
+            [this.schemas.LOG]: [],
+            [this.schemas.SOCKET]: []
+        }
+
+        this.configSocket();
+
+        // Event Listeners
+        this.addEventListener("socketsend", (event) => {
+            this.sendText(event.detail);
+        })
+
+
+    }
+
+    configSocket() {
+        this.socket.onopen = (e) => {
+            console.log('socket opened');
+            this.status = WebSocket.OPEN;
+            this.fireUpdate(this.schemas.SOCKET, true);
+        }
+
+        this.socket.onclose = (e) => {
+            if (e.wasClean) {
+                console.log('closed socket-gucci');
+            }
+            else {
+                console.log('closed socket-not gucci');
+                this.reconnect();
+            }
+            this.fireUpdate(this.schemas.SOCKET, false);
+
+        }
+
+        this.socket.onerror = (e) => {
+            console.log(`error: `);
+            console.log(e);
+        }
+
+        this.socket.onmessage = (e) => {
+            console.log(e.data.toString());
+            const parsedData = e.data.toString().split(":");
+            const schema = parsedData[0];
+            let data = parsedData[1].split(",");
+            switch (schema) {
+                // Format: "encR,encL,encAvg,velR,velL,angle,omega,state,timestamp"
+                case this.schemas.STATE:
+                    let state_data = {
+                        encR: data[0],
+                        encL: data[1],
+                        encAvg: data[2],
+                        velR: data[3],
+                        velL: data[4],
+                        angle: data[5],
+                        omega: data[6],
+                        state: data[7],
+                        timestamp: parseInt(data[8]) / 1000
+
+                    };
+                    
+                    this.fireUpdate(this.schemas.STATE, state_data);
+                    break;
+                // Format: "kP,kI,kD,setpoint,g_offset"
+                case this.schemas.TUNING:
+                    let tuning_data = {
+                        kF: data[0],
+                        kP: data[1],
+                        kI: data[2],
+                        kD: data[3],
+                        setPoint: data[4],
+                        g_offset: data[5],
+                        error: data[6],
+                        timestamp: parseInt(data[7]) / 1000
+                        
+                    };
+                    this.fireUpdate(this.schemas.TUNING, tuning_data);
+
+                    break;
+
+                case this.schemas.LOG:
+                    this.fireUpdate(this.schemas.LOG, data[0]);
+                    break;
+                // Misc data
+                default:
+                    console.log(e.data);
+                    break;
+            }
+        }
+    }
+
+    reconnect() {
+        console.log("reconnecting to socket");
+        setTimeout(() => {
+            this.socket = new WebSocket(this.socketURI);
+            this.configSocket();
+        }, 1000);
     }
 
     sendText(data) {
@@ -138,15 +132,38 @@ export class NoFaceSocket extends EventTarget {
         }
     }
 
-
-    register(pageName, id, eventName) {
-        //Check to remove duplicate (one element can register for multiple events)
-        if (this.registry[pageName].some((element) => element.id == id && element.eventname == eventName)) {
-            this.registry[pageName].splice(this.registry[pageName].findIndex((element) => {
-                element.id == id;
+    // Register a dom object for updates when specified page is updated
+    register(pageName, element, callback) {
+        // Check to remove duplicate 
+        // See if duplicate exists
+        if (this.registry[pageName].some((el) => el.id == element.id)) {
+            // Splice duplicate out
+            console.log("Replacing element from registry list: ");
+            console.log(element);
+            this.registry[pageName].splice(this.registry[pageName].findIndex((el) => {
+                el.id == element.id;
             }), 1);
         }
-        this.registry[pageName].push({ id, eventName });
+        // Add event listener for websocket update
+        element.addEventListener("ws: " + pageName, callback);
+        // Add to registry
+        this.registry[pageName].push(element);
+    }
+
+    // Fire updates for all elements registered for specified page update
+    fireUpdate(pageName, data) {
+        // console.log(data);
+        // this.registry[pageName].forEach(element => {
+        //     element.dispatchEvent(new CustomEvent("ws: " +  pageName, {
+        //         detail: data
+        //     }));
+        // });
+        for (let i = 0; i < this.registry[pageName].length; i++) {
+            const element = this.registry[pageName][i];
+            element.dispatchEvent(new CustomEvent("ws: " + pageName, {
+                detail: data
+            }));
+        }
     }
 
 

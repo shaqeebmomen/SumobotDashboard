@@ -15,11 +15,6 @@ class StatusLight extends HTMLElement {
                 this.shadowRoot.appendChild(template.content.cloneNode(true));
                 this.light = this.shadowRoot.querySelector("#status");
 
-
-                this.addEventListener("statuschange",(event) => {
-                    this.status = event.detail;
-                })
-
             }).then(() => {
                 fetch("/components/status-light/status-light.css")
                     .then((response) => {
@@ -68,6 +63,7 @@ class StatusLight extends HTMLElement {
         this.shadowRoot.appendChild(link);
     }
 
+    // Pass in true or false to change styling to represent enabled or disabled respectively
     set status(value) {
         this._status = value;
         if (value) {

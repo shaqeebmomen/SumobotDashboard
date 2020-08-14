@@ -23,7 +23,8 @@ select {
 
 input,
 button,
-select {
+select,
+h2 {
     display: flex;
     justify-content: center;
     align-items: center;

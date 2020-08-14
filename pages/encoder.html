@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../styles/global-styles.css">
     <link rel="stylesheet" href="../styles/encoder.css">
 
+    <script src="../../node_modules/chart.js/dist/Chart.js""></script>
+
     <script type="module" src="../components/status-light/status-light.js"></script>
     <script type="module" src="../util_modules/websocket.js"></script>
     <script type="module" src="../components/control-panel/control-panel.js"></script>
@@ -21,7 +23,7 @@
 
 <body>
     <header>
-        <nav-bar> </nav-bar>
+        <nav-bar selected="encoder"> </nav-bar>
         <status-light></status-light>
     </header>
 
@@ -30,16 +32,18 @@
 
         <graph-box id="chart-dist" label="S_Right,S_Left"></graph-box>
         <graph-box id="chart-vel" label="V_Right,V_Left"></graph-box>
-        <tuning-box id="enc-readout" label ="encAVG"></tuning-box>
+        <tuning-box id="enc-readout" label ="EncAVG" data-keys="encAvg"></tuning-box>
 
 
     </main>
     <footer>
-        <control-panel states="Idle,PID,Motion Profile,Test,Disabled"></control-panel>
+        <control-panel states="Idle,PID,Motion Profile,Test,Disabled" active="Idle"></control-panel>
         <dash-logger id="dash-logger">
             <p slot="title">Console</p>
         </dash-logger>
     </footer>
+    
+    <script type="module" src="../page_scripts/global_scripts.js"></script>
     <script type="module" src="../page_scripts/encoder_page.js"></script>
 </body>
 
